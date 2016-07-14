@@ -3,17 +3,19 @@
     open System.Collections.Generic;
     open ErikTillema.FSharp
     
+    type Throw = int
+
     type Frame = 
         /// Strike with next 2 throws
-        | Strike of Option<int> * Option<int> 
+        | Strike of Option<Throw> * Option<Throw> 
         /// Spare with next throw
-        | Spare of Option<int>
+        | Spare of Option<Throw>
         /// Normal frame of 2 throws
-        | NormalFrame of int * int 
+        | NormalFrame of Throw * Throw 
         /// Unfinished frame of 1 throw
-        | UnfinishedFrame of int 
+        | UnfinishedFrame of Throw 
 
-    type Game(frames: Frame list, throws: int list) = 
+    type Game(frames: Frame list, throws: Throw list) = 
         
         /// Frames of this game
         let mutable frames = frames
@@ -22,7 +24,7 @@
         let mutable throws = throws
         
         /// Creates a list of Frames based on the list of pins thrown 
-        static let createGame (throws: int list) = 
+        static let createGame (throws: Throw list) = 
             /// Checks that no throw is invalid by itself
             let rec checkThrows = function
                 | [] -> ()
@@ -48,7 +50,7 @@
                 | a::b::t -> (NormalFrame(a, b), t)
                 | a::[] -> (UnfinishedFrame(a), [])
 
-            let rec createGame' nacc acc (throws : int list) =
+            let rec createGame' nacc acc (throws : Throw list) =
                 match nacc, acc, throws with
                 | 10, NormalFrame(_,_)::_ , _::t -> invalidArg "throws" "too many throws" 
                 | 10, Spare(_)::_ ,         _::_::t -> invalidArg "throws" "too many throws" 
